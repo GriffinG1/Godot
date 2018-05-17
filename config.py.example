@@ -30,7 +30,7 @@ nsfw_role = ""
 news_role = ""
 
 # Name of the restricted role. If none exists, leave this blank.
-restrict_role = "Foolhardy foolish fool"
+restrict_role = ""
 
 # Name of your staff role(s)
 staff_roles = [
