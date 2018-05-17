@@ -1,0 +1,43 @@
+# Config for bot
+
+# Token bot runs under
+token = ''
+
+# Prefix to execute bot commands
+prefix = [
+    '.',
+    '!',
+]
+
+# Description of the bot
+description = 'The bot for the Kurain Village Discord!'
+
+# ID for log channel - member joins, leaves, and moderator actions will be sent here
+log_channel = 0
+
+# ID for deleted message logs
+message_log_channel = 0
+
+# Ignored channels for message logging
+ignored_chans = [
+    
+]
+
+# Name of your NSFW role. If none exists, leave this blank.
+nsfw_role = ""
+
+# Name of your News role. If none exists, leave this blank.
+news_role = ""
+
+# Name of the restricted role. If none exists, leave this blank.
+restrict_role = "Foolhardy foolish fool"
+
+# Name of your staff role(s)
+staff_roles = [
+    
+]
+
+# ID's of blacklisted users.
+blocked_users = [
+    
+]
