@@ -174,6 +174,16 @@ async def load(ctx, *, module):
     else:
         await ctx.send(':white_check_mark: Extension loaded.')
         
+@bot.command(hidden=True)
+async def botedit(ctx, name=""):
+    """Edits the bot profile. Takes name only, at the moment. Bot owner only"""
+    await ctx.message.delete()
+    if ctx.author != bot.creator:
+        return
+    if not name:
+        name = bot.user.name
+    return await bot.user.edit(username=name)
+        
 # Execute
 print('Bot directory: ', dir_path)
 bot.run(token)
