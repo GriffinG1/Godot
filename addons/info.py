@@ -10,7 +10,7 @@ class Info:
     @commands.command()
     async def about(self, ctx):
         """Information about the bot"""
-        await ctx.send("This is a bot coded in python for use in the {} server, made by {}#{}. You can view the source code here: CODE NOT UPLOADED YET.".format(ctx.guild.name, self.bot.creator.name, self.bot.creator.discriminator))
+        await ctx.send("This is a bot coded in python for use in the {} server, made by {}#{}. You can view the source code here: <https://github.com/GriffinG1/Godot>.".format(ctx.guild.name, self.bot.creator.name, self.bot.creator.discriminator))
         
     @commands.command(aliases=['mc'])
     async def membercount(self, ctx):
