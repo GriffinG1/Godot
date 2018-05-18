@@ -32,16 +32,16 @@ class Info:
             if not self.bot.nsfw_role in author_roles:
                 await found_member.add_roles(self.bot.nsfw_role)
                 try:
-                    await self.bot.log_channel.send("{}#{} accessed the nsfw channel".format(found_member.name, found_member.discriminator))
-                except: # bot blocked
+                    return await found_member.send("You now have access to the nsfw channel!")
+                except discord.Forbidden: # bot blocked
                     pass
-                return await found_member.send("You now have access to the nsfw channel!")
+                await self.bot.log_channel.send("{}#{} accessed the nsfw channel".format(found_member.name, found_member.discriminator))
             else:
                 await found_member.remove_roles(self.bot.nsfw_role)
                 await self.bot.log_channel.send("{}#{} left the nsfw channel".format(found_member.name, found_member.discriminator))
                 try:
-                    await self.bot.log_channel.send("{}#{} left the nsfw channel".format(found_member.name, found_member.discriminator))
-                except:
+                    return await found_member.send("You have left the nsfw channel!")
+                except discord.Forbidden:
                     pass
         elif role == "news":
             if not self.bot.news_role in author_roles:

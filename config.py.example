@@ -50,4 +50,4 @@ approval_bool = False
 approval_channel = 0
 
 # The default member role for the server.
-default_role = ""
+default_role = 0

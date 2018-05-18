@@ -55,7 +55,7 @@ class Events:
             else:
                 await message.channel.send("Fuck off {}.".format(message.author.mention))
         
-        if 'git' in message.channel.name and message.author.name == 'GitHub':
+        if isinstance(message.channel, discord.abc.GuildChannel) and 'git' in message.channel.name and message.author.name == 'GitHub':
             print('Pulling changes')
             git.pull()
             print('Changes pulled!')

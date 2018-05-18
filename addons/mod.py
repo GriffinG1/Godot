@@ -103,7 +103,7 @@ class Moderation:
         else:
             if not self.bot.restrict_role in found_member.roles[1:]:
                 await found_member.add_roles(self.bot.restrict_role)
-                if bot.approval:
+                if self.bot.approval:
                     await found_member.remove_roles(self.bot.default_role)
                 try:
                     await found_member.send("You were hidden away from {} for:\n\n`{}`\n\nIf you believe this to be in error, please contact a staff member.".format(ctx.guild.name, reason))
@@ -130,7 +130,7 @@ class Moderation:
         else:
             if self.bot.restrict_role in found_member.roles[1:]:
                 await found_member.remove_roles(self.bot.restrict_role)
-                if bot.approval:
+                if self.bot.approval:
                     await found_member.add_roles(self.bot.default_role)
                 embed = discord.Embed(title="{} hidden".format(found_member))
                 embed.description = "{}#{} was unhidden by {}".format(found_member.name, found_member.discriminator, ctx.message.author)
