@@ -1,6 +1,9 @@
 import discord
 from discord.ext import commands
 import asyncio
+import git
+
+git = git.cmd.Git(".")
 
 class Events:
 
@@ -51,6 +54,11 @@ class Events:
                 await message.channel.send("Yes {}?".format(self.bot.creator.mention))
             else:
                 await message.channel.send("Fuck off {}.".format(message.author.mention))
+        
+        if 'git' in message.channel.name and message.author.name == 'GitHub':
+            print('Pulling changes')
+            git.pull()
+            print('Changes pulled!')
             
     async def on_message_delete(self, message):
         if isinstance(message.channel, discord.abc.GuildChannel) and message.author.id != self.bot.user.id and not message.author.bot:
