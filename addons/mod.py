@@ -32,6 +32,11 @@ class Moderation:
     async def kick(self, ctx, member, *, reason="No reason was given."):
         """Kick a member."""
         found_member = self.find_user(member, ctx)
+        for channel in ctx.guild.channels:
+           if isinstance(channel, discord.TextChannel) and channel.position == 0:
+                first_channel = channel
+                pass
+        invite = await first_channel.create_invite()
         if found_member == ctx.message.author:
             return await ctx.send("You can't kick yourself, obviously")
         elif not found_member:
@@ -41,7 +46,7 @@ class Moderation:
             embed.description = "{}#{} was kicked by {} for:\n\n{}".format(found_member.name, found_member.discriminator, ctx.message.author, reason)
             await self.bot.log_channel.send(embed=embed)
             try:
-                await found_member.send("You were kicked from {} for:\n\n`{}`\n\nIf you believe this to be in error, you can rejoin here: https://discord.gg/4wdaeHF".format(ctx.guild.name, reason))
+                await found_member.send("You were kicked from {} for:\n\n`{}`\n\nIf you believe this to be in error, you can rejoin here: {}".format(ctx.guild.name, reason, invite))
             except discord.Forbidden:
                 pass # bot blocked or not accepting DMs
             await found_member.kick(reason=reason)
