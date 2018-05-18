@@ -1,29 +1,25 @@
 import discord
 from discord.ext import commands
+import asyncio
 
 class Events:
 
     def __init__(self, bot):
         self.bot = bot
         print('Addon "{}" loaded'.format(self.__class__.__name__))
-        
-        
-    async def on_guild_join(self, guild):
-        if guild.id != 329431036440084481:
-            try:
-                await guild.owner.send("Left your server, `{}`, as this bot should only be used on the Kurain Village server under this token.".format(guild.name))
-            except discord.Forbidden:
-                for channel in guild.channels:
-                   if guild.me.permissions_in(channel).send_messages and isinstance(channel, discord.TextChannel):
-                        await channel.send("Left your server, as this bot should only be used on the PKSM server under this token.")
-                        break
-            finally:
-                await guild.leave()
                 
     async def on_member_join(self, member):
         embed = discord.Embed(title="New member!")
         embed.description = "{} | {}#{} | {}".format(member.mention, member.name, member.discriminator, member.id)
         await self.bot.log_channel.send(embed=embed)
+        
+        if self.bot.approval:
+            asyncio.sleep(10)
+            members = 0
+            for user in self.bot.guild.members:
+                if not user.bot:
+                    members += 1
+            await self.bot.approval_channel.send("Welcome to {0} {1}! This server is owned by {2.name}#{2.discriminator} and currently has {3} members. Please make sure to read the rules channel, and check out the channel description in this channel for further instructions.".format(self.bot.guild, member.mention, self.bot.guild.owner, members))
             
     async def on_member_remove(self, member):
         embed = discord.Embed(title="Member left.")

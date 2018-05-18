@@ -41,3 +41,13 @@ staff_roles = [
 blocked_users = [
     
 ]
+
+# Approval system. If you aren't using one on your server, leave approval_bool equal to False. If you are, please fill in all values below.
+
+approval_bool = False
+
+# The channel for approvals to occur in.
+approval_channel = 0
+
+# The default member role for the server.
+default_role = ""

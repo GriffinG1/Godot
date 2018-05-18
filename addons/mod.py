@@ -103,6 +103,8 @@ class Moderation:
         else:
             if not self.bot.restrict_role in found_member.roles[1:]:
                 await found_member.add_roles(self.bot.restrict_role)
+                if bot.approval:
+                    await found_member.remove_roles(self.bot.default_role)
                 try:
                     await found_member.send("You were hidden away from {} for:\n\n`{}`\n\nIf you believe this to be in error, please contact a staff member.".format(ctx.guild.name, reason))
                 except:
@@ -128,12 +130,42 @@ class Moderation:
         else:
             if self.bot.restrict_role in found_member.roles[1:]:
                 await found_member.remove_roles(self.bot.restrict_role)
+                if bot.approval:
+                    await found_member.add_roles(self.bot.default_role)
                 embed = discord.Embed(title="{} hidden".format(found_member))
                 embed.description = "{}#{} was unhidden by {}".format(found_member.name, found_member.discriminator, ctx.message.author)
                 await self.bot.log_channel.send(embed=embed)
                 await ctx.send("Successfully unhid user {0.name}#{0.discriminator}!".format(found_member))
             else:
                 return await ctx.send("{0.name}#{0.discriminator} isn't restricted!".format(found_member))
+    
+    def check_if_approval_system(self):
+        return self.bot.approval
+        
+    @commands.command()
+    @commands.check(check_if_approval_system)
+    async def approve(self, ctx, member):
+        """Approves a user, requires approval system to be on"""
+        await ctx.message.delete()
+        found_member = self.find_user(member, ctx)
+        author_roles = ctx.message.author.roles[1:]
+        if not any(r in author_roles[1:] for r in self.bot.staff_roles):
+            return await ctx.send("You can't use this! You need a mod!", delete_after=5)
+        elif not found_member:
+            await ctx.send("That user could not be found.")
+        else:
+            if self.bot.default_role in found_member.roles[1:]:
+                return await ctx.send("That user has already been approved!", delete_after=5)
+            else:
+                await found_member.add_roles(self.bot.default_role)
+                embed = discord.Embed(title="{0.name}#{0.discriminator} Approved".format(found_member))
+                embed.description = "{0.name}#{0.discriminator} was approved by {1.mention}".format(found_member, ctx.message.author)
+                await self.bot.log_channel.send(embed=embed)
+                try:
+                    await found_member.send("You have been approved on {0.name}! Enjoy the server!".format(ctx.guild))
+                except discord.Forbidden:
+                    pass # Bot blocked
+        
             
             
 def setup(bot):

@@ -59,59 +59,51 @@ async def on_ready():
     # this bot should only ever be in one server anyway
     for guild in bot.guilds:
         try:
-            if guild.id == 329431036440084481:
-                    
-                bot.guild = guild
+            bot.guild = guild
+            
+            try:
+                with open("restart.txt") as f:
+                    channel = bot.get_channel(int(f.readline()))
+                    f.close()
+                await channel.send("Restarted!")
+                os.remove("restart.txt")
+            except:
+                pass
                 
-                try:
-                    with open("restart.txt") as f:
-                        channel = bot.get_channel(int(f.readline()))
-                        f.close()
-                    await channel.send("Restarted!")
-                    os.remove("restart.txt")
-                except:
-                    pass
-                    
-                bot.creator = discord.utils.get(guild.members, id=177939404243992578)
+            bot.creator = discord.utils.get(guild.members, id=177939404243992578)
+            
+            bot.log_channel = discord.utils.get(guild.channels, id=config.log_channel)
+            bot.message_log_channel = discord.utils.get(guild.channels, id=config.message_log_channel)
+            bot.ignored_channels = {bot.message_log_channel, bot.log_channel}
+            for id in config.ignored_chans:
+                bot.ignored_channels.add(discord.utils.get(guild.channels, id=id))
                 
-                bot.log_channel = discord.utils.get(guild.channels, id=config.log_channel)
-                bot.message_log_channel = discord.utils.get(guild.channels, id=config.message_log_channel)
-                bot.ignored_channels = {bot.message_log_channel, bot.log_channel}
-                for id in config.ignored_chans:
-                    bot.ignored_channels.add(discord.utils.get(guild.channels, id=id))
-                    
-                if config.nsfw_role != "":
-                    bot.nsfw_role = discord.utils.get(guild.roles, name=config.nsfw_role)
-                if config.news_role != "":
-                    bot.news_role = discord.utils.get(guild.roles, name=config.news_role)
-                if config.restrict_role != "":
-                    bot.restrict_role = discord.utils.get(guild.roles, name=config.restrict_role)
-                bot.staff_roles = set()
-                for role in config.staff_roles:
-                    bot.staff_roles.add(discord.utils.get(guild.roles, name=role))
-                    
-                bot.blocked_users = set()
-                for id in config.blocked_users:
-                    bot.blocked_users.add(discord.utils.get(guild.members, id=id))
-                    
-                bot.message_purge = False
+            bot.approval = config.approval_bool
+            if bot.approval:
+                bot.approval_channel = discord.utils.get(guild.channels, id=config.approval_channel)
+                bot.default_role = discord.utils.get(guild.roles, name=config.default_role)
                 
+            if config.nsfw_role != "":
+                bot.nsfw_role = discord.utils.get(guild.roles, name=config.nsfw_role)
+            if config.news_role != "":
+                bot.news_role = discord.utils.get(guild.roles, name=config.news_role)
+            if config.restrict_role != "":
+                bot.restrict_role = discord.utils.get(guild.roles, name=config.restrict_role)
+            bot.staff_roles = set()
+            for role in config.staff_roles:
+                bot.staff_roles.add(discord.utils.get(guild.roles, name=role))
                 
-                if guild.me.nick != None:
-                    old_nick = guild.me.nick
-                    await bot.user.edit(nick=None)
-                    await bot.log_channel.send("Someone changed my name to {} while I was offline 😡".format(old_nick))
-                    
-            else:
-                try:
-                    await guild.owner.send("Left your server, `{}`, as this bot should only be used on the Kurain Village server under this token.".format(guild.name))
-                except discord.Forbidden:
-                    for channel in guild.channels:
-                       if guild.me.permissions_in(channel).send_messages and isinstance(channel, discord.TextChannel):
-                            await channel.send("Left your server, as this bot should only be used on the PKSM server under this token.")
-                            break
-                finally:
-                    await guild.leave()
+            bot.blocked_users = set()
+            for id in config.blocked_users:
+                bot.blocked_users.add(discord.utils.get(guild.members, id=id))
+                
+            bot.message_purge = False
+            
+            
+            if guild.me.nick != None:
+                old_nick = guild.me.nick
+                await bot.user.edit(nick=None)
+                await bot.log_channel.send("Someone changed my name to {} while I was offline 😡".format(old_nick))                    
                 
             print("Initialized on {}.".format(guild.name))
         except Exception as e:
