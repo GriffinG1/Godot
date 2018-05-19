@@ -28,6 +28,13 @@ class Info:
         found_member = ctx.message.author
         author_roles = found_member.roles[1:]
         role = role.lower()
+        if self.bot.approval:
+            if not self.bot.default_role in author_roles:
+                try:
+                    return await ctx.author.send("You haven't been approved yet, so you can't use that command.")
+                except discord.Forbidden:
+                    return await ctx.send("You haven't been approved yet, so you can't use that command.", delete_after=10)
+            
         if role == "nsfw":
             if not self.bot.nsfw_role in author_roles:
                 await found_member.add_roles(self.bot.nsfw_role)
