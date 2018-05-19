@@ -1,2 +1,7 @@
 config.py
 *__pycache__*
+addons/*
+!addons/info.py
+!addons/events.py
+!addons/mod.py
+!addons/utility.py
