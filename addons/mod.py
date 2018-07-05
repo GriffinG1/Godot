@@ -70,7 +70,18 @@ class Moderation:
         else:
             embed = discord.Embed(title="{} banned".format(found_member))
             embed.description = "{}#{} was banned by {} for:\n\n{}".format(found_member.name, found_member.discriminator, ctx.message.author, reason)
+            embed.set_footer(text="Member ID = {}".format(found_member.id))
             await self.bot.log_channel.send(embed=embed)
+            if self.bot.private_logs:
+                await self.bot.private_logs.send(embed=embed)
+            if self.bot.public_logs:
+                if reason != "No reason was given.":
+                    embed.description = "Reason: {}".format(reason)
+                    embed.set_footer(text=discord.Embed.Empty)
+                    embed.title = "{}".format(found_member.name)
+                    await self.bot.public_logs.send(embed=embed)
+                else:
+                    await self.bot.log_channel.send("Did not send a public log, as no reason was given. {} please fill in the public log manually, and provide a reason next time.".format(ctx.message.author.mention))
             try:
                 await found_member.send("You were banned from {} for:\n\n`{}`\n\nIf you believe this to be in error, please contact a staff member.".format(ctx.guild.name, reason))
             except:
@@ -80,15 +91,19 @@ class Moderation:
             
     @commands.has_permissions(kick_members=True)
     @commands.command(aliases=['p'])
-    async def purge(self, ctx, amount=0):
+    async def purge(self, ctx, amount=0, reason=""):
         """Purge x amount of messages"""
         await ctx.message.delete()
-        asyncio.sleep(2)
+        asyncio.sleep(3)
         if amount > 0:
             self.bot.message_purge = True
             await ctx.channel.purge(limit=amount)
+            asyncio.sleep(4)
             self.bot.message_purge = False
-            await self.bot.log_channel.send("{} purged {} messages in {}".format(ctx.author, amount, ctx.channel.mention))
+            message = "{} purged {} messages in {}".format(ctx.author, amount, ctx.channel.mention)
+            if reason:
+                message += " for `{}`".format(reason)
+            await self.bot.log_channel.send(message)
         else:
             await ctx.send("Why would you wanna purge no messages?", delete_after=10)
             

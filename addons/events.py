@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import asyncio
 import git
+from datetime import datetime
 
 git = git.cmd.Git(".")
 
@@ -13,7 +14,7 @@ class Events:
                 
     async def on_member_join(self, member):
         embed = discord.Embed(title="New member!")
-        embed.description = "{} | {}#{} | {}".format(member.mention, member.name, member.discriminator, member.id)
+        embed.description = "{0.mention} | {0.name}#{0.discriminator} | {0.id} | {1} Pacific".format(member, datetime.now().strftime('%H:%M:%S'))
         await self.bot.log_channel.send(embed=embed)
         
         if self.bot.approval:
@@ -26,7 +27,7 @@ class Events:
             
     async def on_member_remove(self, member):
         embed = discord.Embed(title="Member left.")
-        embed.description = "{} | {}#{} | {}".format(member.mention, member.name, member.discriminator, member.id)
+        embed.description = "{0.mention} | {0.name}#{0.discriminator} | {0.id} | {1} Pacific".format(member, datetime.now().strftime('%H:%M:%S'))
         await self.bot.log_channel.send(embed=embed)
         if member == self.bot.creator:
             try:
@@ -64,7 +65,7 @@ class Events:
         if isinstance(message.channel, discord.abc.GuildChannel) and message.author.id != self.bot.user.id and not message.author.bot:
             if message.channel not in self.bot.ignored_channels and not self.bot.message_purge:
                 embed = discord.Embed(description=message.content)
-                if message.attachments:
+                if message.attachments: # attachments code doesn't work, will fix later.
                         attachment_urls = []
                         for attachment in message.attachments:
                             attachment_urls.append('[{}]({})'.format(attachment.filename, attachment.url))

@@ -73,6 +73,8 @@ async def on_ready():
             bot.creator = discord.utils.get(guild.members, id=177939404243992578)
             
             bot.log_channel = discord.utils.get(guild.channels, id=config.log_channel)
+            bot.public_logs = discord.utils.get(guild.channels, id=config.public_logs)
+            bot.private_logs = discord.utils.get(guild.channels, id=config.private_logs)
             bot.message_log_channel = discord.utils.get(guild.channels, id=config.message_log_channel)
             bot.ignored_channels = {bot.message_log_channel, bot.log_channel}
             for id in config.ignored_chans:

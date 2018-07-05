@@ -15,6 +15,10 @@ description = 'The bot for the Kurain Village Discord!'
 # ID for log channel - member joins, leaves, and moderator actions will be sent here
 log_channel = 0
 
+# ID for public and private ban logs, if they exist. Note, you can have one and not the other
+public_logs = 0
+private_logs = 0
+
 # ID for deleted message logs
 message_log_channel = 0
 
