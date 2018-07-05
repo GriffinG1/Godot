@@ -91,7 +91,7 @@ class Moderation:
             
     @commands.has_permissions(kick_members=True)
     @commands.command(aliases=['p'])
-    async def purge(self, ctx, amount=0, reason=""):
+    async def purge(self, ctx, amount=0, *, reason=""):
         """Purge x amount of messages"""
         await ctx.message.delete()
         asyncio.sleep(3)
