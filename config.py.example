@@ -22,6 +22,9 @@ private_logs = 0
 # ID for deleted message logs
 message_log_channel = 0
 
+# ID for error logging
+err_logs = 0
+
 # Ignored channels for message logging
 ignored_chans = [
     
@@ -38,12 +41,12 @@ restrict_role = ""
 
 # Name of your staff role(s)
 staff_roles = [
-    
+    ""
 ]
 
 # ID's of blacklisted users.
 blocked_users = [
-    
+    0
 ]
 
 # Approval system. If you aren't using one on your server, leave approval_bool equal to False. If you are, please fill in all values below.

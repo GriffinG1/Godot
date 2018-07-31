@@ -43,6 +43,9 @@ async def on_command_error(ctx, error):
         tb = traceback.format_exception(type(error), error, error.__traceback__)
         error_trace = "".join(tb)
         print(error_trace)
+        if bot.err_logs_channel:
+            embed = discord.Embed(description=error_trace)
+            await bot.err_logs_channel.send("An error occurred while processing the `{}` command in channel `{}`.".format(ctx.command.name, ctx.message.channel), embed=embed)
 
 @bot.event
 async def on_error(event_method, *args, **kwargs):
@@ -52,6 +55,9 @@ async def on_error(event_method, *args, **kwargs):
     tb = traceback.format_exc()
     error_trace = "".join(tb)
     print(error_trace)
+    if bot.err_logs_channel:
+        embed = discord.Embed(description=error_trace)
+        await bot.err_logs_channel.send("An error occurred while processing `{}`.".format(event_method), embed=embed)
 
 
 @bot.event
@@ -76,6 +82,7 @@ async def on_ready():
             bot.public_logs = discord.utils.get(guild.channels, id=config.public_logs)
             bot.private_logs = discord.utils.get(guild.channels, id=config.private_logs)
             bot.message_log_channel = discord.utils.get(guild.channels, id=config.message_log_channel)
+            bot.err_logs_channel = discord.utils.get(guild.channels, id=468877079023321089)
             bot.ignored_channels = {bot.message_log_channel, bot.log_channel}
             for id in config.ignored_chans:
                 bot.ignored_channels.add(discord.utils.get(guild.channels, id=id))
@@ -91,9 +98,9 @@ async def on_ready():
                 bot.news_role = discord.utils.get(guild.roles, name=config.news_role)
             if config.restrict_role != "":
                 bot.restrict_role = discord.utils.get(guild.roles, name=config.restrict_role)
-            bot.staff_roles = set()
+            bot.staff_roles = []
             for role in config.staff_roles:
-                bot.staff_roles.add(discord.utils.get(guild.roles, name=role))
+                bot.staff_roles.append(discord.utils.get(guild.roles, name=role))
                 
             bot.blocked_users = set()
             for id in config.blocked_users:

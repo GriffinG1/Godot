@@ -116,7 +116,7 @@ class Moderation:
         author_roles = ctx.message.author.roles[1:]
         if found_member == ctx.message.author:
             return await ctx.send("You can't hide yourself, obviously")
-        elif any(r in found_member.roles[1:] for r in self.bot.staff_roles):
+        elif any(r in found_member.roles for r in self.bot.staff_roles):
             return await ctx.send("That member is protected!")
         elif not found_member:
             await ctx.send("That user could not be found.")
@@ -169,7 +169,9 @@ class Moderation:
         await ctx.message.delete()
         found_member = self.find_user(member, ctx)
         author_roles = ctx.message.author.roles[1:]
-        if not any(r in author_roles[1:] for r in self.bot.staff_roles):
+        print(author_roles)
+        print(self.bot.staff_roles)
+        if not any(r in author_roles for r in self.bot.staff_roles):
             return await ctx.send("You can't use this! You need a mod!", delete_after=5)
         elif not found_member:
             await ctx.send("That user could not be found.")
