@@ -42,7 +42,7 @@ class Moderation:
         elif not found_member:
             await ctx.send("That user could not be found.")
         else:
-            embed = discord.Embed(title="{} kicked".format(found_member))
+            embed = discord.Embed(title="{} kicked".format(found_member), colour=discord.Color.orange())
             embed.description = "{}#{} was kicked by {} for:\n\n{}".format(found_member.name, found_member.discriminator, ctx.message.author, reason)
             await self.bot.log_channel.send(embed=embed)
             try:
@@ -68,7 +68,7 @@ class Moderation:
         elif not found_member:
             await ctx.send("That user could not be found.")
         else:
-            embed = discord.Embed(title="{} banned".format(found_member))
+            embed = discord.Embed(title="{} banned".format(found_member), colour=discord.Color.red())
             embed.description = "{}#{} was banned by {} for:\n\n{}".format(found_member.name, found_member.discriminator, ctx.message.author, reason)
             embed.set_footer(text="Member ID = {}".format(found_member.id))
             await self.bot.log_channel.send(embed=embed)
@@ -131,7 +131,7 @@ class Moderation:
                 await found_member.send("You were hidden away from {} for:\n\n`{}`\n\nIf you believe this to be in error, please contact a staff member.".format(ctx.guild.name, reason))
             except:
                 pass # bot blocked or not accepting DMs
-            embed = discord.Embed(title="{} hidden".format(found_member))
+            embed = discord.Embed(title="{} hidden".format(found_member), colour=discord.Color.purple())
             embed.description = "{}#{} was hidden by {} for:\n\n{}".format(found_member.name, found_member.discriminator, ctx.message.author, reason)
             await self.bot.log_channel.send(embed=embed)
             await ctx.send("Successfully hid user {0.name}#{0.discriminator}!".format(found_member))
@@ -148,16 +148,16 @@ class Moderation:
         elif not found_member:
             await ctx.send("That user could not be found.")
         else:
-            if self.bot.restrict_role in found_member.roles[1:]:
+            if self.bot.approval and not self.bot.default_role in found_member.roles[1:]:
+                await found_member.add_roles(self.bot.default_role)
+            elif not self.bot.restrict_role in found_member.roles[1:]:
                 await found_member.remove_roles(self.bot.restrict_role)
-                if self.bot.approval:
-                    await found_member.add_roles(self.bot.default_role)
-                embed = discord.Embed(title="{} hidden".format(found_member))
-                embed.description = "{}#{} was unhidden by {}".format(found_member.name, found_member.discriminator, ctx.message.author)
-                await self.bot.log_channel.send(embed=embed)
-                await ctx.send("Successfully unhid user {0.name}#{0.discriminator}!".format(found_member))
             else:
                 return await ctx.send("{0.name}#{0.discriminator} isn't restricted!".format(found_member))
+            embed = discord.Embed(title="{} hidden".format(found_member), colour=discord.Color.from_rgb(255, 102, 153))
+            embed.description = "{}#{} was unhidden by {}".format(found_member.name, found_member.discriminator, ctx.message.author)
+            await self.bot.log_channel.send(embed=embed)
+            await ctx.send("Successfully unhid user {0.name}#{0.discriminator}!".format(found_member))
     
     def check_if_approval_system(self):
         return self.bot.approval
@@ -178,7 +178,7 @@ class Moderation:
                 return await ctx.send("That user has already been approved!", delete_after=5)
             else:
                 await found_member.add_roles(self.bot.default_role)
-                embed = discord.Embed(title="{0.name}#{0.discriminator} Approved".format(found_member))
+                embed = discord.Embed(title="{0.name}#{0.discriminator} Approved".format(found_member), colour=discord.Color.gold())
                 embed.description = "{0.name}#{0.discriminator} was approved by {1.mention}".format(found_member, ctx.message.author)
                 await self.bot.log_channel.send(embed=embed)
                 try:
@@ -186,6 +186,10 @@ class Moderation:
                 except discord.Forbidden:
                     pass # Bot blocked
         
+        
+    @commands.command(aliases=['ge'], hidden=True)
+    async def guaranteed_error(self, ctx):
+        await ctx.s()
             
             
 def setup(bot):

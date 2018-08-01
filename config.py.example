@@ -23,7 +23,7 @@ private_logs = 0
 message_log_channel = 0
 
 # ID for error logging
-err_logs = 0
+err_logs_channel = 0
 
 # Ignored channels for message logging
 ignored_chans = [

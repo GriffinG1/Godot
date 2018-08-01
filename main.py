@@ -43,6 +43,7 @@ async def on_command_error(ctx, error):
         tb = traceback.format_exception(type(error), error, error.__traceback__)
         error_trace = "".join(tb)
         print(error_trace)
+        print(bot.err_logs_channel)
         if bot.err_logs_channel:
             embed = discord.Embed(description=error_trace)
             await bot.err_logs_channel.send("An error occurred while processing the `{}` command in channel `{}`.".format(ctx.command.name, ctx.message.channel), embed=embed)
@@ -82,7 +83,7 @@ async def on_ready():
             bot.public_logs = discord.utils.get(guild.channels, id=config.public_logs)
             bot.private_logs = discord.utils.get(guild.channels, id=config.private_logs)
             bot.message_log_channel = discord.utils.get(guild.channels, id=config.message_log_channel)
-            bot.err_logs_channel = discord.utils.get(guild.channels, id=468877079023321089)
+            bot.err_logs_channel = discord.utils.get(guild.channels, id=config.err_logs_channel)
             bot.ignored_channels = {bot.message_log_channel, bot.log_channel}
             for id in config.ignored_chans:
                 bot.ignored_channels.add(discord.utils.get(guild.channels, id=id))

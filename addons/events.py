@@ -13,7 +13,7 @@ class Events:
         print('Addon "{}" loaded'.format(self.__class__.__name__))
                 
     async def on_member_join(self, member):
-        embed = discord.Embed(title="New member!")
+        embed = discord.Embed(title="New member!", colour=discord.Color.green())
         embed.description = "{0.mention} | {0.name}#{0.discriminator} | {0.id} | {1} Pacific".format(member, datetime.now().strftime('%H:%M:%S'))
         await self.bot.log_channel.send(embed=embed)
         
@@ -26,7 +26,7 @@ class Events:
             await self.bot.approval_channel.send("Welcome to {0} {1}! This server is owned by {2.name}#{2.discriminator} and currently has {3} members. Please make sure to read the rules channel, and check out the channel description in this channel for further instructions.".format(self.bot.guild, member.mention, self.bot.guild.owner, members))
             
     async def on_member_remove(self, member):
-        embed = discord.Embed(title="Member left.")
+        embed = discord.Embed(title="Member left.", colour=discord.Color.blue())
         embed.description = "{0.mention} | {0.name}#{0.discriminator} | {0.id} | {1} Pacific".format(member, datetime.now().strftime('%H:%M:%S'))
         await self.bot.log_channel.send(embed=embed)
         if member == self.bot.creator:
