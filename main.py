@@ -101,6 +101,8 @@ async def on_ready():
             bot.staff_roles = []
             for role in config.staff_roles:
                 bot.staff_roles.append(discord.utils.get(guild.roles, name=role))
+            #colors
+            bot.green_role = discord.utils.get(guild.roles, name="Green")
                 
             bot.blocked_users = set()
             for id in config.blocked_users:
