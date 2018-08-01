@@ -128,6 +128,7 @@ addons = [
     'addons.events',
     'addons.utility',
     'addons.mod',
+    'addons.colors'
 ]
 
 failed_addons = []
@@ -186,6 +187,15 @@ async def botedit(ctx, name=""):
     if not name:
         name = bot.user.name
     return await bot.user.edit(username=name)
+    
+@bot.command(hidden=True) # taken from https://github.com/appu1232/Discord-Selfbot/blob/873a2500d2c518e0d25ca5a6f67828de60fbda99/cogs/misc.py#L626
+async def ping(ctx):
+    """Get response time."""
+    msgtime = ctx.message.created_at.now()
+    await (await bot.ws.ping())
+    now = datetime.datetime.now()
+    ping = now - msgtime
+    await ctx.send('Response Time: %s ms' % str(ping.microseconds / 1000.0))
         
 # Execute
 print('Bot directory: ', dir_path)

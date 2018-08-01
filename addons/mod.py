@@ -121,20 +121,20 @@ class Moderation:
         elif not found_member:
             await ctx.send("That user could not be found.")
         else:
-            if not self.bot.restrict_role in found_member.roles[1:]:
+            if self.bot.approval and self.bot.default_role in found_member.roles[1:]:
+                await found_member.remove_roles(self.bot.default_role)
+            elif not self.bot.restrict_role in found_member.roles[1:]:
                 await found_member.add_roles(self.bot.restrict_role)
-                if self.bot.approval:
-                    await found_member.remove_roles(self.bot.default_role)
-                try:
-                    await found_member.send("You were hidden away from {} for:\n\n`{}`\n\nIf you believe this to be in error, please contact a staff member.".format(ctx.guild.name, reason))
-                except:
-                    pass # bot blocked or not accepting DMs
-                embed = discord.Embed(title="{} hidden".format(found_member))
-                embed.description = "{}#{} was hidden by {} for:\n\n{}".format(found_member.name, found_member.discriminator, ctx.message.author, reason)
-                await self.bot.log_channel.send(embed=embed)
-                await ctx.send("Successfully hid user {0.name}#{0.discriminator}!".format(found_member))
             else:
                 return await ctx.send("{0.name}#{0.discriminator} is already restricted!".format(found_member))
+            try:
+                await found_member.send("You were hidden away from {} for:\n\n`{}`\n\nIf you believe this to be in error, please contact a staff member.".format(ctx.guild.name, reason))
+            except:
+                pass # bot blocked or not accepting DMs
+            embed = discord.Embed(title="{} hidden".format(found_member))
+            embed.description = "{}#{} was hidden by {} for:\n\n{}".format(found_member.name, found_member.discriminator, ctx.message.author, reason)
+            await self.bot.log_channel.send(embed=embed)
+            await ctx.send("Successfully hid user {0.name}#{0.discriminator}!".format(found_member))
             
     @commands.has_permissions(kick_members=True)
     @commands.command()
@@ -169,8 +169,6 @@ class Moderation:
         await ctx.message.delete()
         found_member = self.find_user(member, ctx)
         author_roles = ctx.message.author.roles[1:]
-        print(author_roles)
-        print(self.bot.staff_roles)
         if not any(r in author_roles for r in self.bot.staff_roles):
             return await ctx.send("You can't use this! You need a mod!", delete_after=5)
         elif not found_member:
