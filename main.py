@@ -26,6 +26,13 @@ bot = commands.Bot(command_prefix=prefix, description=description)
 
 bot.dir_path = os.path.dirname(os.path.realpath(__file__))
 
+@bot.check # taken and modified from https://discordpy.readthedocs.io/en/rewrite/ext/commands/commands.html#global-checks
+async def globally_block_dms(ctx):
+    if ctx.guild is None:
+        raise discord.ext.commands.NoPrivateMessage('test')
+        return False
+    return True
+
 # mostly taken from https://github.com/Rapptz/discord.py/blob/async/discord/ext/commands/bot.py
 @bot.event
 async def on_command_error(ctx, error):
@@ -33,6 +40,8 @@ async def on_command_error(ctx, error):
         pass  # ...don't need to know if commands don't exist
     elif isinstance(error, discord.ext.commands.errors.CheckFailure):
         await ctx.send("You don't have permission to use this command.")
+    elif isinstance(error, discord.ext.commands.NoPrivateMessage):
+        await ctx.send("You cannot use this command in DMs!")
     elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
         formatter = commands.formatter.HelpFormatter()
         await ctx.send("You are missing required arguments.\n{}".format(formatter.format_help_for(ctx, ctx.command)[0]))
@@ -43,7 +52,6 @@ async def on_command_error(ctx, error):
         tb = traceback.format_exception(type(error), error, error.__traceback__)
         error_trace = "".join(tb)
         print(error_trace)
-        print(bot.err_logs_channel)
         if bot.err_logs_channel:
             embed = discord.Embed(description=error_trace)
             await bot.err_logs_channel.send("An error occurred while processing the `{}` command in channel `{}`.".format(ctx.command.name, ctx.message.channel), embed=embed)
@@ -189,15 +197,31 @@ async def botedit(ctx, name=""):
         name = bot.user.name
     return await bot.user.edit(username=name)
     
-@bot.command(hidden=True) # taken from https://github.com/appu1232/Discord-Selfbot/blob/873a2500d2c518e0d25ca5a6f67828de60fbda99/cogs/misc.py#L626
-async def ping(ctx):
-    """Get response time."""
+async def pingfunc(ctx): # taken from https://github.com/appu1232/Discord-Selfbot/blob/873a2500d2c518e0d25ca5a6f67828de60fbda99/cogs/misc.py#L626
     msgtime = ctx.message.created_at.now()
     await (await bot.ws.ping())
     now = datetime.datetime.now()
-    ping = now - msgtime
+    return now - msgtime
+
+@bot.command(hidden=True) 
+async def ping(ctx):
+    """Get response time."""
+    ping = await pingfunc(ctx)
     await ctx.send('Response Time: %s ms' % str(ping.microseconds / 1000.0))
-        
+    
+@bot.command(hidden=True)
+async def avgping(ctx, count=5):
+    if count > 100:
+        return await ctx.send("That's too many samples! Limit is 100")
+    elif count <= 0:
+        return await ctx.send("You can't take the average of a non positive number of samples!")
+    ping_total = datetime.timedelta()
+    for x in range(count):
+        ping_total += await pingfunc(ctx)
+    average_ping = ping_total / count
+    await ctx.send('Average Response Time: %s ms' % str(average_ping.microseconds / 1000.0))
+    
+    
 # Execute
 print('Bot directory: ', dir_path)
 bot.run(token)
